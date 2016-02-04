@@ -4,6 +4,8 @@ import android.os.AsyncTask;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
+import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
+import com.google.api.client.googleapis.services.GoogleClientRequestInitializer;
 import com.udacity.gradle.backend.tellJoke.TellJoke;
 
 
@@ -20,8 +22,15 @@ public class EndpointsAsyncTask extends AsyncTask<String, Void, Integer> {
         System.out.println("executing do in background");
         if(myApiService == null) {  // Only do this once
             TellJoke.Builder builder = new TellJoke.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null)
-                    .setRootUrl("https://hybris-a617c.appspot.com/_ah/spi/");
-
+                    .setRootUrl("http://10.10.5.127:8080/_ah/api/").
+                            setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
+                        @Override
+                        public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest)
+                                throws IOException {
+                            abstractGoogleClientRequest.setDisableGZipContent(true);
+                        }
+                    });;
+            builder.setApplicationName("Some crazy App Name");
             myApiService = builder.build();
         }
 
@@ -36,6 +45,6 @@ public class EndpointsAsyncTask extends AsyncTask<String, Void, Integer> {
 
     @Override
     protected void onPostExecute(Integer result) {
-        System.out.println("Response is "+result);
+        System.out.println("Response is "+this.result);
     }
 }

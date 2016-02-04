@@ -31,6 +31,7 @@ public class MyEndpoint {
         MyBean response = new MyBean();
         JokeSource jokeSource = new JokeSource();
         response.setData(jokeSource.makeMeLaugh());
+        System.out.println("response is "+response.getData());
         return response;
     }
 
