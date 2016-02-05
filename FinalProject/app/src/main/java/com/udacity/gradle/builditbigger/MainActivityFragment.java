@@ -1,5 +1,8 @@
 package com.udacity.gradle.builditbigger;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -19,8 +22,19 @@ import com.udacity.gradle.jokedisplay.JokeActivity;
  */
 public class MainActivityFragment extends Fragment implements OnReceivedListener{
 
-    public MainActivityFragment() {
+    Context context;
+    ProgressDialog progressDialog;
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.context = context;
     }
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        context = null;
+    }
+
     Button tellAJoke;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -42,15 +56,27 @@ public class MainActivityFragment extends Fragment implements OnReceivedListener
                 tellJoke();
             }
         });
+        setRetainInstance(true);
+        progressDialog = new ProgressDialog(context);
+        progressDialog.setMessage("Please wait");
+        progressDialog.setCancelable(false);
         return root;
     }
     public void tellJoke(){
-        new EndpointsAsyncTask(getActivity(),this).execute();
+        String endPoint = context.getString(R.string.endpoint_url);
+        new EndpointsAsyncTask(endPoint,this).execute();
+        progressDialog.show();
     }
     @Override
     public void onReceived(String result) {
-        Intent intent = new Intent(getActivity(), JokeActivity.class);
-        intent.putExtra(JokeActivity.JOKE_KEY,result);
+        progressDialog.dismiss();
+        Intent intent = new Intent(context, JokeActivity.class);
+        if(result !=null) {
+            intent.putExtra(JokeActivity.JOKE_KEY, result);
+        }
+        else{
+            intent.putExtra(JokeActivity.JOKE_KEY, context.getString(R.string.error_string));
+        }
         startActivity(intent);
     }
 }

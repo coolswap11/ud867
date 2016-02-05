@@ -14,8 +14,6 @@ import android.widget.TextView;
  */
 public class JokeActivityFragment extends Fragment {
 
-    public JokeActivityFragment() {
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
