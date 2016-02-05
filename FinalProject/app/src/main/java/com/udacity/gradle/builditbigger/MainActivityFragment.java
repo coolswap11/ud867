@@ -24,6 +24,7 @@ public class MainActivityFragment extends Fragment implements OnReceivedListener
 
     Context context;
     ProgressDialog progressDialog;
+    boolean isTaskRunning = false;
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -33,6 +34,17 @@ public class MainActivityFragment extends Fragment implements OnReceivedListener
     public void onDetach() {
         super.onDetach();
         context = null;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (isTaskRunning) {
+            progressDialog = new ProgressDialog(context);
+            progressDialog.setMessage("Please wait");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+        }
     }
 
     Button tellAJoke;
@@ -65,10 +77,12 @@ public class MainActivityFragment extends Fragment implements OnReceivedListener
     public void tellJoke(){
         String endPoint = context.getString(R.string.endpoint_url);
         new EndpointsAsyncTask(endPoint,this).execute();
+        isTaskRunning = true;
         progressDialog.show();
     }
     @Override
     public void onReceived(String result) {
+        isTaskRunning = false;
         progressDialog.dismiss();
         Intent intent = new Intent(context, JokeActivity.class);
         if(result !=null) {
