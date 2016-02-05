@@ -1,5 +1,7 @@
 package com.udacity.gradle.builditbigger;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.AsyncTask;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
@@ -14,15 +16,31 @@ import java.io.IOException;
 /**
  * Created by 597753 on 04-02-2016.
  */
-public class EndpointsAsyncTask extends AsyncTask<String, Void, Integer> {
+public class EndpointsAsyncTask extends AsyncTask<String, Void, String> {
     private static TellJoke myApiService = null;
-    String result;
+    OnReceivedListener listener;
+    Context context;
+    ProgressDialog progressDialog;
+    public EndpointsAsyncTask(Context context,OnReceivedListener listner){
+        this.listener = listner;
+        this.context = context;
+    }
+
     @Override
-    protected Integer doInBackground(String... params) {
+    protected void onPreExecute() {
+        super.onPreExecute();
+        progressDialog = new ProgressDialog(context);
+        progressDialog.setMessage(context.getString(R.string.progress_dialog_text));
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+    }
+
+    @Override
+    protected String doInBackground(String... params) {
         System.out.println("executing do in background");
         if(myApiService == null) {  // Only do this once
             TellJoke.Builder builder = new TellJoke.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null)
-                    .setRootUrl("http://10.10.5.127:8080/_ah/api/").
+                    .setRootUrl(context.getString(R.string.endpoint_url)).
                             setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
                         @Override
                         public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest)
@@ -30,21 +48,24 @@ public class EndpointsAsyncTask extends AsyncTask<String, Void, Integer> {
                             abstractGoogleClientRequest.setDisableGZipContent(true);
                         }
                     });;
-            builder.setApplicationName("Some crazy App Name");
+            builder.setApplicationName(context.getString(R.string.app_name));
             myApiService = builder.build();
+
         }
 
 
         try {
-            result = myApiService.tellJoke().execute().getData();
+            return myApiService.tellJoke().execute().getData();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return 0;
+        return context.getString(R.string.error_string);
     }
 
     @Override
-    protected void onPostExecute(Integer result) {
-        System.out.println("Response is "+this.result);
+    protected void onPostExecute(String result) {
+        System.out.println("Response is "+result);
+        progressDialog.dismiss();
+        listener.onReceived(result);
     }
 }

@@ -18,9 +18,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/instructions_text_view"
+        android:id="@+id/btn_tellAJoke"
         android:text="@string/button_text"
-        android:onClick="tellJoke"
-
         />
 
     <com.google.android.gms.ads.AdView

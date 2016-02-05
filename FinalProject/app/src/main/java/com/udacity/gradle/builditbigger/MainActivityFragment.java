@@ -1,23 +1,27 @@
 package com.udacity.gradle.builditbigger;
 
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.udacity.gradle.jokedisplay.JokeActivity;
 
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainActivityFragment extends Fragment {
+public class MainActivityFragment extends Fragment implements OnReceivedListener{
 
     public MainActivityFragment() {
     }
-
+    Button tellAJoke;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -31,6 +35,22 @@ public class MainActivityFragment extends Fragment {
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
                 .build();
         mAdView.loadAd(adRequest);
+        tellAJoke = (Button)root.findViewById(R.id.btn_tellAJoke);
+        tellAJoke.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                tellJoke();
+            }
+        });
         return root;
+    }
+    public void tellJoke(){
+        new EndpointsAsyncTask(getActivity(),this).execute();
+    }
+    @Override
+    public void onReceived(String result) {
+        Intent intent = new Intent(getActivity(), JokeActivity.class);
+        intent.putExtra(JokeActivity.JOKE_KEY,result);
+        startActivity(intent);
     }
 }
