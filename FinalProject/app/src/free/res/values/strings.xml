@@ -1,9 +1,9 @@
 <resources>
-    <string name="app_name">Build it Bigger</string>
+    <string name="app_name">Build it Bigger free</string>
     <string name="instructions">Press the button for a delicious joke!</string>
     <string name="button_text">Tell Joke</string>
     <string name="action_settings">Settings</string>
-    <string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="banner_ad_unit_id">ca-app-pub-6606840352528545/6872937256</string>
     <string name="progress_dialog_text">Please wait</string>
     <string name="endpoint_url">https://hybris-a617c.appspot.com/_ah/api/</string>
     <string name="error_string">Could not connect to server at this moment</string>
