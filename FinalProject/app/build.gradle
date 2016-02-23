@@ -26,6 +26,10 @@ android {
             applicationId "com.udacity.gradle.builditbigger.paid"
         }
     }
+	dexOptions {
+	    preDexLibraries = false
+        javaMaxHeapSize "4g"
+    }
 }
 
 dependencies {
